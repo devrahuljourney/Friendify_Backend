@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const Profile = require("../modals/AdditionalDetails");
+const mailSender = require("../utils/mailSender");
+const { passwordUpdated } = require("../mail/template/passwordUpdate");
 
 
 
@@ -213,3 +215,69 @@ exports.login = async (req, res) => {
         });
     }
 };
+
+
+
+exports.changePassword = async(req, res) => {
+    try {
+        const {newPassword, oldPassword} = req.body;
+        if(!newPassword || !oldPassword)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"All the fields are required"
+            })
+        }
+
+
+        const user = await User.findById(req.user.id);
+
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+        if(!isPasswordMatch)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"The password you entered is incorrect"
+            })
+        }
+
+        const encryptPassword = await bcrypt.hash(newPassword, 10);
+
+        const updatedUserPassword = await User.findByIdAndUpdate(req.user.id , 
+            {password:encryptPassword},
+            {
+                new :true
+            }
+        )
+
+        try {
+            const emailResponse = await mailSender(
+                updatedUserPassword.email,
+                "Password for your account has been successfully updated",
+                passwordUpdated(updatedUserPassword.email),
+                `Password updated successfully for ${updatedUserPassword.firstname} ${updatedUserPassword.lastname}`
+
+            )
+
+            console.log("Email sent successfully:", emailResponse.response)
+        } catch (error) {
+            console.error("Error occurred while sending email:", error)
+        return res.status(500).json({
+          success: false,
+          message: "Error occurred while sending email",
+          error: error.message,
+        })
+        }
+
+        return res
+        .status(200)
+        .json({ success: true, message: "Password updated successfully" })
+    } catch (error) {
+        console.error("Error occurred while updating password:", error)
+      return res.status(500).json({
+        success: false,
+        message: "Error occurred while updating password",
+        error: error.message,
+      })
+    }
+}
