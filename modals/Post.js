@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 
 const postSchema = new mongoose.Schema({
-    content:{
+    file:{
         type:String
     },
     caption:{
@@ -10,20 +10,21 @@ const postSchema = new mongoose.Schema({
     location:{
         type:String
     },
-    userId:
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
-        },
+
+    // userId:
+    //     {
+    //         type:mongoose.Schema.Types.ObjectId,
+    //         ref:"User"
+    //     },
         
     
-    like:[
+    likes:[
         {
             type:mongoose.Schema.Types.ObjectId,
             ref:"Like"
         }
     ],
-    Comment:{
+    Comments:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Comment"
     },
