@@ -4,12 +4,12 @@ const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/createpost", auth, createPost);
+ router.post("/createpost", auth, createPost);
  router.post("/editpost/:postId", auth, editPost);
  router.delete("/deletepost/:postId", auth, deletePost);
+ router.get('/getfeedfromfollower',auth, getFeedFromFollower )
  router.get('/getallpost/:userId', getAllPostsFromUser)
  router.get("/getpost/:postId",  getPost);
- router.get('/getfeedfromfollower',auth, getFeedFromFollower )
  router.get('/getfeedfromalluser', getFeedFromAllUsers)
 
 

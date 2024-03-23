@@ -10,7 +10,7 @@ exports.createPost = async (req, res) => {
         const { caption, location } = req.body;
 
         // Check if the user exists
-        const userFound = await User.findOne({ _id: userId });
+        const userFound = await User.findById({ _id: userId });
         if (!userFound) {
             return res.status(400).json({
                 success: false,
