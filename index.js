@@ -5,6 +5,8 @@ const userRoutes = require("./route/User");
 const postRoutes = require('./route/Post');
 const commentRoutes = require('./route/Comment');
 const likeRoutes = require('./route/Like');
+const profileRoutes = require('./route/Profile');
+
 
 
 const cookieParser = require("cookie-parser");
@@ -31,6 +33,8 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/post", postRoutes);
 app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/like", likeRoutes);
+app.use("/api/v1/profile", profileRoutes);
+
 
 
 
