@@ -1,4 +1,6 @@
 const { default: mongoose } = require("mongoose");
+const Like = require("./Like");
+const Comment = require("./Comment");
 
 const postSchema = new mongoose.Schema({
     file:{
@@ -11,11 +13,11 @@ const postSchema = new mongoose.Schema({
         type:String
     },
 
-    // userId:
-    //     {
-    //         type:mongoose.Schema.Types.ObjectId,
-    //         ref:"User"
-    //     },
+    userId:
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User"
+        },
         
     
     likes:[
@@ -24,10 +26,12 @@ const postSchema = new mongoose.Schema({
             ref:"Like"
         }
     ],
-    Comments:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Comment"
-    },
+    comments:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Comment"
+        }
+    ],
     createdAt:{
         type:Date,
         default:Date.now()

@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
-const userRoutes = require("./route/User"); // Corrected route file path
+
+const userRoutes = require("./route/User"); 
+const postRoutes = require('./route/Post')
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const fileUpload = require("express-fileupload");
-const postRoutes = require('./route/Post')
+
 const PORT = process.env.PORT || 3000;
 const db = require("./config/database");
 const { cloudinaryConnect } = require("./config/cloudinary");
