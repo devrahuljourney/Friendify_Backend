@@ -3,7 +3,10 @@ const app = express();
 
 const userRoutes = require("./route/User"); 
 const postRoutes = require('./route/Post');
-const commentRoutes = require('./route/Comment')
+const commentRoutes = require('./route/Comment');
+const likeRoutes = require('./route/Like');
+
+
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const fileUpload = require("express-fileupload");
@@ -27,6 +30,8 @@ cloudinaryConnect();
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/post", postRoutes);
 app.use("/api/v1/comment", commentRoutes);
+app.use("/api/v1/like", likeRoutes);
+
 
 
 
