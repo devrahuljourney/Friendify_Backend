@@ -71,6 +71,7 @@ exports.signup = async (req,res) => {
         //entry in db
 
         const {firstname , lastname , email, password, confirmPassword, otp} = req.body;
+        console.log("req body ", req.body)
         if(!firstname || !email || !password || !confirmPassword || !otp){
             return res.status(403).json({
                 success:false,

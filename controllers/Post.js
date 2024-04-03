@@ -139,11 +139,14 @@ exports.getPost = async (req, res) => {
 
         
         const post = await Post.findById(postId)
-            .populate('userId') 
-            .populate({
-                path: 'comments', 
-                populate: { path: 'user', select: 'username' } 
-            })
+        .populate({
+            path: 'userId',
+            populate: {
+                path: 'additionalDetails',
+                model: 'Profile'
+            }
+        }) 
+            .populate('comments')
             .populate('likes').sort({createdAt:-1});; 
         if (!post) {
             return res.status(404).json({
@@ -170,7 +173,20 @@ exports.getFeedFromFollower = async (req, res) => {
         const user = await User.findById(userId);
         const following = user.following;
 
-        const posts = await Post.find({ userId: { $in: following } }).populate("comments").populate("likes").sort({createdAt:-1});;
+        const posts = await Post.find({ userId: { $in: following } })
+        .populate({
+            path: 'userId',
+            populate: {
+                path: 'additionalDetails',
+                model: 'Profile'
+            }
+        })
+    .populate("comments")
+    .populate("likes")
+    .sort({ createdAt: -1 });
+
+            
+        
         res.status(200).json({
             success: true,
             message: "Feed retrieved successfully",
@@ -187,8 +203,20 @@ exports.getFeedFromAllUsers = async (req, res) => {
     try {
         // Fetch posts from all users
         const posts = await Post.find()
-            .populate('userId')
-            .populate('comments.user')
+        .populate({
+            path: 'userId',
+            populate: {
+                path: 'additionalDetails',
+                model: 'Profile'
+            }
+        })
+            .populate({
+                path:"comments",
+                populate : {
+                    path : "userId",
+                    populate: "additionalDetails"
+                }
+            })
             .populate('likes').sort({createdAt:-1});
 
         res.status(200).json({

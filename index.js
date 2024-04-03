@@ -6,7 +6,7 @@ const postRoutes = require('./route/Post');
 const commentRoutes = require('./route/Comment');
 const likeRoutes = require('./route/Like');
 const profileRoutes = require('./route/Profile');
-
+const cors = require("cors");
 
 
 const cookieParser = require("cookie-parser");
@@ -20,6 +20,13 @@ db.connect();
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(
+	cors({
+		origin:"http://localhost:3000",
+		credentials:true,
+	})
+)
 
 app.use(
 	fileUpload({

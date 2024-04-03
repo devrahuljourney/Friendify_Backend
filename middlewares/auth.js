@@ -6,9 +6,12 @@ const User = require("../modals/User");
 // auth 
 
 exports.auth = async (req, res,next) => {
+    console.log("Request Headers:", req.headers);
+
  try {
     // extract token
 
+    
     const token = req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer ","");
     console.log("token", token)
     // if token is missing return res
@@ -29,7 +32,7 @@ exports.auth = async (req, res,next) => {
         req.user = decode;
         console.log("request user data ", req.user);
     } catch (error) {
-        // verificatiin issue
+        // verification issue
 
         return res.status(401).json({
             success:false,
@@ -38,9 +41,11 @@ exports.auth = async (req, res,next) => {
     }
     next();
  } catch (error) {
+    console.log("Error in auth ", error)
     return res.status(401).json({
         success:false,
-        message: 'Someting went wrong while validating the token'
+        message: 'Someting went wrong while validating the token',
+        error: error.message
     })
  }
 }
