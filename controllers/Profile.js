@@ -43,6 +43,39 @@ exports.createProfile = async (req, res) => {
 };
 
 
+exports.getProfileById = async (req,res) => {
+    try {
+        const {userId} = req.params;
+        const userProfile = await User.findById(userId)
+            .populate("additionalDetails")
+            .populate("followers")
+            .populate("following")
+            .populate({
+                path:"posts"
+            });
+
+        if (!userProfile) {
+            return res.status(404).json({
+                success: false,
+                message: "User profile not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User profile retrieved successfully",
+            profile: userProfile
+        });
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch user profile",
+            error: error.message
+        });
+    }
+}
+
 exports.deleteProfile = async (req, res) => {
     try {
         const userId = req.user.id;
