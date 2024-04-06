@@ -20,10 +20,12 @@ db.connect();
 
 app.use(express.json());
 app.use(cookieParser());
+//const originUrl = "http://localhost:3000"
+const originUrl = "https://friendify-alpha.vercel.app"
 
 app.use(
 	cors({
-		origin:"http://localhost:3000",
+		origin: originUrl,
 		credentials:true,
 	})
 )
