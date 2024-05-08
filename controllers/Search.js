@@ -12,12 +12,13 @@ const searchBasicOnKeywords = async (req, res) => {
             });
         }
 
+        
         const users = await User.find({
             $or: [
                 { firstname: { $regex: keyword, $options: 'i' } },
                 { lastname: { $regex: keyword, $options: 'i' } }
             ]
-        });
+        }).populate('additionalDetails'); 
 
         const posts = await Post.find({
             $or: [
@@ -25,7 +26,6 @@ const searchBasicOnKeywords = async (req, res) => {
                 { location: { $regex: keyword, $options: 'i' } }
             ]
         });
-        
 
         return res.status(200).json({
             success: true,
