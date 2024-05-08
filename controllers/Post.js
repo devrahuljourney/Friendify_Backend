@@ -20,6 +20,7 @@ exports.createPost = async (req, res) => {
 
         // Upload the file to Cloudinary
         const file = req.files.file;
+        console.log("File ", file)
         const fileLink = await uploadToCloudinary(file, process.env.FOLDER_NAME);
 
         // Create a new post instance

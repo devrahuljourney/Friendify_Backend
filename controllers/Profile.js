@@ -4,32 +4,46 @@ const { uploadToCloudinary } = require("../utils/uploader");
 
 exports.createProfile = async (req, res) => {
     try {
-        const { mobileNumber, gender, dob,  about, bio, link } = req.body;
+        const { firstname, lastname, mobileNumber, gender, dob, about, bio, link, location } = req.body;
 
-        const image = req.files.profileimage;
-        const uploadimage = await uploadToCloudinary(image, process.env.FOLDER_NAME);
+        const image = req.files ? req.files.profileimage : null;
+        if (!image) {
+         return res.status(400).json({ success: false, message: "Image file is required" });
+        }
+
+const uploadimage = await uploadToCloudinary(image, process.env.FOLDER_NAME);
+
         const userId = req.user.id;
 
+        console.log("PROFILE IMAGE ", uploadimage);
+
+        // Update user details with first name and last name
+        const userDetails = await User.findByIdAndUpdate(userId, {
+            $set: { firstname, lastname }
+        }, { new: true });
+
+        // Create a new profile
         const profile = new Profile({
             mobileNumber,
             gender,
             dob,
-            image: image.secure_url,
+            image: uploadimage.secure_url,
             about,
             bio,
-            link
+            link,
+            location
         });
 
         await profile.save();
 
         // Link the profile to the user
-        const user = await User.findById(userId);
-        user.additionalDetails = profile._id;
-        await user.save();
+        userDetails.additionalDetails = profile._id;
+        await userDetails.save();
 
         res.status(201).json({
             success: true,
             message: "Profile created successfully",
+            userDetails,
             profile
         });
     } catch (error) {
@@ -41,6 +55,8 @@ exports.createProfile = async (req, res) => {
         });
     }
 };
+
+
 
 
 exports.getProfileById = async (req,res) => {

@@ -23,6 +23,9 @@ const profileSchema = new mongoose.Schema({
     link:{
         type:String
     },
+    location: {
+        type:String
+    }
 })
 
 module.exports = mongoose.model("Profile", profileSchema);

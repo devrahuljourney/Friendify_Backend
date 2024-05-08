@@ -6,6 +6,7 @@ const postRoutes = require('./route/Post');
 const commentRoutes = require('./route/Comment');
 const likeRoutes = require('./route/Like');
 const profileRoutes = require('./route/Profile');
+const searchRoute = require('./route/Search');
 const cors = require("cors");
 
 
@@ -20,8 +21,8 @@ db.connect();
 
 app.use(express.json());
 app.use(cookieParser());
-//const originUrl = "http://localhost:3000"
-const originUrl = "https://friendify-alpha.vercel.app"
+const originUrl = "http://localhost:3000"
+//const originUrl = "https://friendify-alpha.vercel.app"
 
 app.use(
 	cors({
@@ -43,6 +44,7 @@ app.use("/api/v1/post", postRoutes);
 app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/like", likeRoutes);
 app.use("/api/v1/profile", profileRoutes);
+app.use("/api/v1/search", searchRoute);
 
 
 

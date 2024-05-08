@@ -37,5 +37,18 @@ const postSchema = new mongoose.Schema({
         default:Date.now()
     }
 })
+postSchema.pre('remove', async function(next) {
+    try {
+        // Remove associated likes
+        await Like.deleteMany({ postId: this._id });
 
+        // Remove associated comments
+        await Comment.deleteMany({ postId: this._id });
+        delete this.createdAt;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 module.exports = mongoose.model("Post", postSchema);
