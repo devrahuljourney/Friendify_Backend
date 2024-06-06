@@ -10,7 +10,8 @@ function initializeSocketServer(server) {
             methods: ["GET", "POST"] ,
             transports: ['websocket', 'polling'],
             credentials: true,
-        }
+        },
+        allowEIO3: true
     });
 
     io.on('connection', (socket) => {  
