@@ -8,6 +8,7 @@ function initializeSocketServer(server) {
         cors: {
             origin: [localhost, originUrl],
             methods: ["GET", "POST"] ,
+            transports: ['websocket', 'polling'],
             credentials: true,
         }
     });
