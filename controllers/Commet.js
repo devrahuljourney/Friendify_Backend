@@ -35,6 +35,9 @@ exports.createComment = async (req, res) => {
 
         
         await post.save();
+        // req.io.emit("newComment", (data) => {
+        //     console.log(data)
+        // });
 
         res.status(200).json({
             success: true,

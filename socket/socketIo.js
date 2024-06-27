@@ -8,10 +8,11 @@ function initializeSocketServer(server) {
         cors: {
             origin: [localhost, originUrl],
             methods: ["GET", "POST"] ,
-            transports: ['websocket', 'polling'],
+            // transports: ['websocket', 'polling'],
             credentials: true,
-        },
-        allowEIO3: true
+        }
+        // ,
+        // allowEIO3: true
     });
 
     io.on('connection', (socket) => {  
@@ -23,15 +24,17 @@ function initializeSocketServer(server) {
 
         socket.on("likePost", (data) => {
             const {userId , postId } = data
+            console.log("user and post id" , userId, postId);
             io.emit("updatePost", userId); 
-            console.log(data);
+            
         });
 
-        socket.on("commentPost", (data) => {
+        socket.on("newComment", (data) => {
             io.emit("updatePost", data); 
             console.log(data);
         });
     });
+    return io;
 }
 
 module.exports = initializeSocketServer;

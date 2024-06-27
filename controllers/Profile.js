@@ -220,3 +220,46 @@ exports.unfollowUser = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to unfollow user', error: error.message });
     }
 };
+
+exports.followSuggestions = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId).populate("following");
+
+        
+        const randomUserList = user.following.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+        let suggestions = new Set();
+
+        for (let followedUser of randomUserList) {
+            
+            const list = await User.find({
+                _id: { $ne: userId, $nin: user.following._id },
+                followers: followedUser._id
+            });
+
+            
+            list.forEach(user => suggestions.add(user._id));
+        }
+
+        
+        const uniqueUserIds = Array.from(suggestions);
+
+        
+        let finalSuggestions = await User.find({ _id: { $in: uniqueUserIds } }).populate("additionalDetails");
+
+        
+        finalSuggestions = finalSuggestions.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+        
+        res.status(200).json({
+            success:true,
+            suggestions: finalSuggestions ,
+            message:"Suggestions fetched Successfully"
+        });
+
+    } catch (error) {
+        console.error('Error generating follow suggestions:', error);
+        res.status(500).json({ sucess:false, message: 'Error generating follow suggestions', error : error.message });
+    }
+}
