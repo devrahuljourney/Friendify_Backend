@@ -7,6 +7,7 @@ const commentRoutes = require('./route/Comment');
 const likeRoutes = require('./route/Like');
 const profileRoutes = require('./route/Profile');
 const searchRoute = require('./route/Search');
+const messageRoute = require("./route/Conversation")
 const cors = require("cors");
 
 const cookieParser = require("cookie-parser");
@@ -50,6 +51,7 @@ app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/like", likeRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/search", searchRoute);
+app.use("/api/v1/message", messageRoute );
 
 const io = initializeSocketServer(server);
 app.use((req, res, next) => {

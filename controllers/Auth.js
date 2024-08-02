@@ -171,6 +171,7 @@ exports.login = async (req, res) => {
 
         // Update the lastlogin field for the existing user
         await User.findByIdAndUpdate(existingUser._id, { lastlogin: Date.now() });
+        
 
         console.log("Password entered by user:", password);
         console.log("Hashed password stored in database:", existingUser.password);

@@ -65,7 +65,11 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Notification"
         }
-    ]
+    ],
+    onlineStatus : {
+        type: Boolean,
+        default:false
+    }
 });
 
 

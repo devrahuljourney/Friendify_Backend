@@ -226,15 +226,31 @@ exports.followSuggestions = async (req, res) => {
         const userId = req.user.id;
         const user = await User.findById(userId).populate("following");
 
+        const allUsers = await User.find().populate("following").populate("additionalDetails");
+
+        if (user.following.length === 0) {
+            console.log("allUsers ", allUsers)
+            return res.status(200).json({
+                success: true,
+                message: "User hasn't followed anyone",
+                suggestions: allUsers
+            });
+        }
         
-        const randomUserList = user.following.sort(() => 0.5 - Math.random()).slice(0, 5);
+        const followedUserIds = user.following.map(followedUser => followedUser._id.toString());
+
+        
+        const randomUserList = user.following.sort(() => 0.5 - Math.random()).slice(0, 10);
 
         let suggestions = new Set();
 
         for (let followedUser of randomUserList) {
-            
+
             const list = await User.find({
-                _id: { $ne: userId, $nin: user.following._id },
+                _id: { 
+                    $ne: userId, 
+                    $nin: followedUserIds 
+                },
                 followers: followedUser._id
             });
 
@@ -249,17 +265,17 @@ exports.followSuggestions = async (req, res) => {
         let finalSuggestions = await User.find({ _id: { $in: uniqueUserIds } }).populate("additionalDetails");
 
         
-        finalSuggestions = finalSuggestions.sort(() => 0.5 - Math.random()).slice(0, 5);
+        finalSuggestions = finalSuggestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 
         
         res.status(200).json({
-            success:true,
-            suggestions: finalSuggestions ,
-            message:"Suggestions fetched Successfully"
+            success: true,
+            suggestions: finalSuggestions,
+            message: "Suggestions fetched successfully"
         });
 
     } catch (error) {
         console.error('Error generating follow suggestions:', error);
-        res.status(500).json({ sucess:false, message: 'Error generating follow suggestions', error : error.message });
+        res.status(500).json({ success: false, message: 'Error generating follow suggestions', error: error.message });
     }
 }
