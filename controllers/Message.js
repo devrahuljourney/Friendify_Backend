@@ -40,7 +40,7 @@ exports.sendMessage = async (req, res) => {
 
 exports.getMessage = async (req, res) => {
     try {
-        const {senderId, receiverId} = req.body;
+        const {senderId, receiverId} = req.params;
         const convId = await Conversation.findOne({members: {$all : [senderId,receiverId]}});
         if(!convId){
             return res.status(400).json({
@@ -72,9 +72,11 @@ exports.getMessage = async (req, res) => {
     }
 }
 
+
+
 exports.getMessagedUser = async (req, res) => {
     try {
-        const { senderId } = req.body;
+        const { senderId } = req.params;
 
         if (!senderId) {
             return res.status(400).json({
@@ -83,19 +85,21 @@ exports.getMessagedUser = async (req, res) => {
             });
         }
 
-        
         const objectIdSenderId = new mongoose.Types.ObjectId(senderId);
-
-        
         console.log(`Searching for conversations with senderId: ${objectIdSenderId}`);
 
-        
-        const user = await Conversation.find({ 'members.0': objectIdSenderId }).populate('members');;
+        const conversations = await Conversation.find({ 'members.0': objectIdSenderId })
+            .populate({
+                path: 'members',
+                populate: {
+                    path: 'additionalDetails',
+                    model: 'Profile'
+                }
+            });
 
-        
-        console.log(`Conversations found: ${JSON.stringify(user)}`);
+        console.log(`Conversations found: ${JSON.stringify(conversations)}`);
 
-        if (user.length === 0) {
+        if (conversations.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: "No messages found for the given sender ID",
@@ -105,7 +109,7 @@ exports.getMessagedUser = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User found successfully",
-            user: user,
+            user: conversations,
         });
     } catch (error) {
         return res.status(400).json({
