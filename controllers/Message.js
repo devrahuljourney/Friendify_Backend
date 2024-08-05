@@ -88,7 +88,7 @@ exports.getMessagedUser = async (req, res) => {
         const objectIdSenderId = new mongoose.Types.ObjectId(senderId);
         console.log(`Searching for conversations with senderId: ${objectIdSenderId}`);
 
-        const conversations = await Conversation.find({ 'members.0': objectIdSenderId })
+        const conversationsAsSender = await Conversation.find({ 'members.0': objectIdSenderId })
             .populate({
                 path: 'members',
                 populate: {
@@ -97,24 +97,36 @@ exports.getMessagedUser = async (req, res) => {
                 }
             });
 
-        console.log(`Conversations found: ${JSON.stringify(conversations)}`);
+        const conversationsAsReceiver = await Conversation.find({ 'members.1': objectIdSenderId })
+            .populate({
+                path: 'members',
+                populate: {
+                    path: 'additionalDetails',
+                    model: 'Profile'
+                }
+            });
 
-        if (conversations.length === 0) {
+        console.log(`Conversations found as sender: ${JSON.stringify(conversationsAsSender)}`);
+        console.log(`Conversations found as receiver: ${JSON.stringify(conversationsAsReceiver)}`);
+
+        if (conversationsAsSender.length === 0 && conversationsAsReceiver.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: "No messages found for the given sender ID",
             });
         }
 
+        const combinedConversations = [...new Set([...conversationsAsSender, ...conversationsAsReceiver])];
+
         return res.status(200).json({
             success: true,
-            message: "User found successfully",
-            user: conversations,
+            message: "Users found successfully",
+            user: combinedConversations,
         });
     } catch (error) {
         return res.status(400).json({
             success: false,
-            message: "Error in fetching user",
+            message: "Error in fetching users",
             error: error.message,
         });
     }
